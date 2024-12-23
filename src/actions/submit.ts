@@ -3,6 +3,7 @@
 import prisma from "@/lib/db";
 
 export const Submit = async (request: unknown) => {
+  console.log(request);
   try {
     const { name, email, rollNumber, code, language, day } = request as any;
 

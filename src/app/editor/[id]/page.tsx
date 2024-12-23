@@ -43,7 +43,7 @@ const Editor = () => {
 
   const handleSubmit = async (details?: UserDetails) => {
     // Always show modal when submitting
-    setShowUserModal(true);
+    setShowUserModal(false);
     if (details) {
       setIsSubmitting(true);
       try {
@@ -133,7 +133,7 @@ Output:
             </select>
 
             <button
-              onClick={() => handleSubmit()}
+              onClick={() => setShowUserModal(true)}
               disabled={isSubmitting}
               className="btn-primary disabled:opacity-50"
             >
