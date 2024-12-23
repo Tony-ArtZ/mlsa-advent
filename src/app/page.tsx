@@ -1,55 +1,31 @@
 import Image from "next/image";
 import Link from "next/link";
 import SnowfallBackground from "@/components/SnowfallBackground";
+import { getAllQuestion } from "@/actions/question";
 
-export default function Home() {
-  const calendarDays = Array.from({ length: 5 }, (_, i) => ({
-    day: i + 1,
-    title: [
-      "Santa's Helper",
-      "Christmas Tree Builder",
-      "Present Sorter",
-      "Reindeer Routes",
-      "Elf Workshop",
-    ][i],
-    isLocked: [false, true, true, true, true][i],
-    difficulty: ["Easy", "Medium", "Hard", "Medium", "Hard"][i],
-    emoji: ["🎅", "🎄", "🎁", "🦌", "⚒️"][i],
-    description: [
-      "Help Santa organize his database",
-      "Create the perfect Christmas tree algorithm",
-      "Sort presents by priority",
-      "Optimize delivery paths",
-      "Manage workshop efficiency",
-    ][i],
-  }));
+// Convert to Server Component
+export default async function Home() {
+  // Fetch questions from DB
+  const response = await getAllQuestion();
+  const questions = response.questions;
 
   return (
     <main className="relative min-h-screen bg-gradient-to-b from-christmas-dark via-christmas-pine to-christmas-dark/95">
       <SnowfallBackground />
 
-      {/* Header Section */}
       <div className="container mx-auto px-4 py-12 relative z-10">
-        {/* Decorative Elements */}
-        <div className="absolute top-0 left-0 w-32 h-32 animate-float opacity-20">
-          <Image
-            src="/holly-decoration.png"
-            alt="Holly"
-            fill
-            className="object-contain"
-          />
-        </div>
-
-        {/* Header Section */}
+        {/* LOGO Section */}
         <div className="text-center mb-16">
           <div className="flex justify-center mb-8 animate-float">
             <div className="w-40 h-40 relative">
-              <Image
-                src="/mlsaLogo.webp"
-                alt="MLSA KIIT Logo"
-                fill
-                className="object-contain"
-              />
+              <Link href="https://mlsakiit.com/">
+                <Image
+                  src="/mlsaLogo.webp"
+                  alt="MLSA KIIT Logo"
+                  fill
+                  className="object-contain"
+                />
+              </Link>
             </div>
           </div>
 
@@ -63,7 +39,7 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Instagram Follow Section */}
+        {/* Instagram Section */}
         <div className="card p-8 max-w-4xl mx-auto mb-16 text-center">
           <div className="animate-pulse mb-4">
             <span className="text-4xl">🎅</span>
@@ -104,17 +80,25 @@ export default function Home() {
 
             {/* Calendar Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-              {calendarDays.map(
-                ({ day, title, isLocked, difficulty, emoji, description }) => (
-                  <Link
-                    href={isLocked ? "#" : `/editor/${day}`}
-                    key={day}
-                    className={`aspect-square relative group ${
-                      isLocked ? "cursor-not-allowed" : "cursor-pointer"
-                    }`}
-                  >
-                    <div
-                      className={`
+              {questions ? (
+                questions.map(
+                  ({
+                    day,
+                    title,
+                    isLocked,
+                    difficulty,
+                    emoji,
+                    description,
+                  }) => (
+                    <Link
+                      href={isLocked ? "#" : `/editor/${day}`}
+                      key={day}
+                      className={`aspect-square relative group ${
+                        isLocked ? "cursor-not-allowed" : "cursor-pointer"
+                      }`}
+                    >
+                      <div
+                        className={`
                     calendar-day w-full h-full rounded-lg p-4
                     flex flex-col items-center justify-between
                     transform transition-all duration-300
@@ -126,25 +110,28 @@ export default function Home() {
                     border-2 border-christmas-gold/30
                     backdrop-blur-sm
                   `}
-                    >
-                      <span className="text-3xl mb-2">{emoji}</span>
-                      <span className="text-2xl font-bold text-christmas-snow mb-1">
-                        Day {day}
-                      </span>
-                      <h3 className="text-christmas-gold font-medium text-sm mb-1">
-                        {title}
-                      </h3>
-                      <p className="text-xs text-christmas-snow/70 line-clamp-2">
-                        {description}
-                      </p>
-                      {isLocked && (
-                        <span className="text-4xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                          🔒
+                      >
+                        <span className="text-3xl mb-2">{emoji}</span>
+                        <span className="text-2xl font-bold text-christmas-snow mb-1">
+                          Day {day}
                         </span>
-                      )}
-                    </div>
-                  </Link>
+                        <h3 className="text-christmas-gold font-medium text-sm mb-1">
+                          {title}
+                        </h3>
+                        <p className="text-xs text-christmas-snow/70 line-clamp-2">
+                          {description}
+                        </p>
+                        {isLocked && (
+                          <span className="text-4xl absolute top-2 right-2">
+                            🔒
+                          </span>
+                        )}
+                      </div>
+                    </Link>
+                  )
                 )
+              ) : (
+                <div>Loading...</div>
               )}
             </div>
           </div>

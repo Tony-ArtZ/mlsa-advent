@@ -3,9 +3,9 @@
 import prisma from "@/lib/db";
 
 export const Submit = async (request: unknown) => {
-  console.log(request);
   try {
-    const { name, email, rollNumber, code, language, day } = request as any;
+    const { name, email, rollNumber, code, language, day, questionId } =
+      request as any;
 
     // Find or create user
     const user = await prisma.user.upsert({
@@ -25,6 +25,7 @@ export const Submit = async (request: unknown) => {
         language,
         day,
         userId: user.id,
+        questionId,
       },
     });
 

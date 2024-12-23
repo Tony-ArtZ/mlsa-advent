@@ -124,7 +124,7 @@ export default function UserModal({
               <input
                 type="text"
                 name="rollNumber"
-                placeholder="Roll Number"
+                placeholder="Roll Number (Optional)"
                 value={formData.rollNumber}
                 onChange={handleChange}
                 className="w-full bg-christmas-dark/50 text-christmas-snow rounded-lg px-4 py-2 border border-white/10"

@@ -1,0 +1,42 @@
+[
+  {
+    "day": 1,
+    "title": "Santa's Helper",
+    "description": "Create a function that prints a Christmas tree pattern using asterisks (*). The function should take a number n as input, which represents the height of the tree.\n",
+    "example": "Input: n = 3\nOutput:\n   *\n  ***\n *****\n\n",
+    "constraints": "- 1 ≤ n ≤ 20\n- The tree should be centered",
+    "submissionHint": "Try using nested loops - one for rows and one for the spaces and stars in each row",
+    "hint": "HINT 1",
+    "isLocked": false,
+    "difficulty": "Easy",
+    "emoji": "🎅",
+    "testCases": [
+      {
+        "input": "3",
+        "expected": "  *\n ***\n*****"
+      },
+      {
+        "input": "4",
+        "expected": "   *\n  ***\n *****\n*******"
+      }
+    ]
+  },
+{
+    "day": 2,
+    "title": "Christmas Tree Builder",
+    "description": "Help build an advanced tree decoration algorithm that creates a decorated Christmas tree pattern.\n\nExample:\nInput: n = 3\nOutput:\n   *\n  /o\\\n /**\\",
+    "example": "Input: n = 3\nOutput:\n   *\n  /o\\\n /**\\",
+    "constraints": "- 1 ≤ n ≤ 10\n- The tree should include decorations (o) and branches (/\\)",
+    "submissionHint": "Consider using a recursive approach",
+    "hint": "HINT 2",
+    "isLocked": true,
+    "difficulty": "Medium",
+    "emoji": "🎄",
+    "testCases": [
+        {
+            "input": "3",
+            "expected": "  *\n /o\\\n/**\\"
+        }
+    ]
+}
+]

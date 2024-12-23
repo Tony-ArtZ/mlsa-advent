@@ -11,11 +11,7 @@ export const userSchema = z.object({
       required_error: "Email is required",
     })
     .email("Invalid email address"),
-  rollNumber: z
-    .string({
-      required_error: "Roll number is required",
-    })
-    .min(5, "Roll number must be 8 digits"),
+  rollNumber: z.string({}).optional(),
 });
 
 export type UserDetails = z.infer<typeof userSchema>;

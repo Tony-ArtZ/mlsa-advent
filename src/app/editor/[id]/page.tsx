@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { CodeEditor } from "@/components/CodeMirror";
 import SnowfallBackground from "@/components/SnowfallBackground";
 import { useParams } from "next/navigation";
@@ -8,12 +9,18 @@ import { Submit } from "@/actions/submit";
 import Modal from "@/components/Modal";
 import UserModal from "@/components/UserModal";
 import type { UserDetails } from "@/lib/verifications";
+import { getQuestion } from "@/actions/question";
+import Loader from "@/components/Loader";
 
 const languages = ["javascript", "python", "cpp", "java"] as const;
 
 const Editor = () => {
+  const router = useRouter();
   const params = useParams();
   const day = parseInt(params.id as string);
+
+  const [question, setQuestion] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [code, setCode] = useState("// Write your solution here\n");
   const [language, setLanguage] =
     useState<(typeof languages)[number]>("javascript");
@@ -22,6 +29,27 @@ const Editor = () => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [hint, setHint] = useState("");
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+
+  useEffect(() => {
+    const fetchQuestion = async () => {
+      try {
+        const response = await getQuestion(day);
+        if (response.error) throw new Error("Question not found");
+        if (response.question?.isLocked) {
+          router.push("/");
+          return;
+        }
+
+        setQuestion(response.question);
+      } catch (error) {
+        router.push("/");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuestion();
+  }, [day, router]);
 
   const handleCodeChange = useCallback((value: string) => {
     setCode(value);
@@ -42,7 +70,6 @@ const Editor = () => {
   };
 
   const handleSubmit = async (details?: UserDetails) => {
-    // Always show modal when submitting
     setShowUserModal(false);
     if (details) {
       setIsSubmitting(true);
@@ -52,6 +79,7 @@ const Editor = () => {
           code,
           language,
           day,
+          questionId: question.id,
         });
 
         if (res.success) {
@@ -68,47 +96,85 @@ const Editor = () => {
     }
   };
 
+  if (loading) return <Loader />;
+  if (!question) return null;
+
   return (
     <div className="min-h-screen flex flex-wrap relative">
       <SnowfallBackground />
 
       {/* Problem Description Side */}
       <div className="w-full lg:w-1/2 p-4 lg:p-8 relative z-10 order-1">
-        <div className="card p-4 lg:p-6 mb-4 lg:mb-6 animate-float">
+        <div className="card p-4 lg:p-6 mb-4 lg:mb-6 ">
           <div className="inline-block px-3 py-1 rounded-full bg-christmas-red/20 text-christmas-red text-sm mb-4">
-            Day 1 - December 1, 2023
+            Day {day} - December {day}, 2023
           </div>
           <h1 className="text-2xl lg:text-3xl font-bold text-christmas-snow mb-4">
-            🎄 Christmas Tree Pattern
+            {question.emoji} {question.title}
           </h1>
           <div className="prose text-christmas-snow/80">
-            <p className="mb-4 lg:mb-6 text-base lg:text-lg">
-              Create a function that prints a Christmas tree pattern using
-              asterisks (*). The function should take a number n as input, which
-              represents the height of the tree.
-            </p>
+            <div className="whitespace-pre-wrap">{question.description}</div>
 
-            <div className="card p-3 lg:p-4 mb-4 lg:mb-6 bg-christmas-green/10 overflow-x-auto">
-              <h3 className="text-christmas-gold font-semibold mb-2">
-                Example:
+            {/* Example Section */}
+            <div className="mt-6 p-4 bg-christmas-gold/10 rounded-lg border border-christmas-gold/20">
+              <h3 className="text-christmas-gold flex items-center gap-2">
+                <span>🎁</span> Example
               </h3>
-              <pre className="text-christmas-snow bg-black/30 p-3 lg:p-4 rounded-lg text-sm lg:text-base whitespace-pre">
-                {`Input: n = 3
-Output:
-   *
-  ***
- *****`}
+              <pre className="mt-2 p-3 bg-christmas-dark/30 rounded-md overflow-x-auto">
+                {question.example}
               </pre>
             </div>
 
-            <div className="card p-3 lg:p-4 bg-christmas-red/10">
-              <h3 className="text-christmas-gold font-semibold mb-2">
-                Constraints:
+            {/* Constraints Section */}
+            <div className="mt-4 p-4 bg-christmas-red/10 rounded-lg border border-christmas-red/20">
+              <h3 className="text-christmas-red flex items-center gap-2">
+                <span>🎄</span> Constraints
               </h3>
-              <ul className="list-disc list-inside space-y-1 text-christmas-snow/90">
-                <li>1 ≤ n ≤ 20</li>
-                <li>The tree should be centered</li>
-              </ul>
+              <pre className="mt-2 p-3 bg-christmas-dark/30 rounded-md overflow-x-auto">
+                {question.constraints}
+              </pre>
+            </div>
+
+            {/* Test Cases Section */}
+            <div className="mt-4 p-4 bg-green-800/10 rounded-lg border border-green-800/20">
+              <h3 className="text-christmas-gold flex items-center gap-2">
+                <span>🎯</span> Test Cases
+              </h3>
+              <div className="space-y-4 mt-2">
+                {question.testCases?.map(
+                  (
+                    test: { input: string; expected: string },
+                    index: number
+                  ) => (
+                    <div
+                      key={index}
+                      className="bg-christmas-dark/30 rounded-md p-3"
+                    >
+                      <div className="text-christmas-gold/80 text-sm mb-2">
+                        Test Case {index + 1}:
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <div className="text-christmas-snow/60 text-sm mb-1">
+                            Input:
+                          </div>
+                          <pre className="text-christmas-snow/90">
+                            {test.input}
+                          </pre>
+                        </div>
+                        <div>
+                          <div className="text-christmas-snow/60 text-sm mb-1">
+                            Expected Output:
+                          </div>
+                          <pre className="text-christmas-snow/90 whitespace-pre">
+                            {test.expected}
+                          </pre>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
             </div>
           </div>
         </div>

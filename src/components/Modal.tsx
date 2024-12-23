@@ -10,7 +10,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, hint }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative bg-christmas-dark p-6 rounded-xl max-w-md w-full mx-4 animate-float">
+      <div className="relative bg-christmas-dark p-6 rounded-xl max-w-md w-full mx-4">
         <h2 className="text-2xl font-bold text-christmas-snow mb-4">
           Thank You! 🎄
         </h2>
