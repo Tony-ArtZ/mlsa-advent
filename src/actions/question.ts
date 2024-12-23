@@ -12,7 +12,6 @@ export const getAllQuestion = async () => {
 
 export const getQuestion = async (day: number) => {
   try {
-    console.log(day);
     const question = await prisma.question.findUnique({
       where: {
         day: day,

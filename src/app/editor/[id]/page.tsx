@@ -12,7 +12,7 @@ import type { UserDetails } from "@/lib/verifications";
 import { getQuestion } from "@/actions/question";
 import Loader from "@/components/Loader";
 
-const languages = ["javascript", "python", "cpp", "java"] as const;
+const languages = ["javascript", "python", "cpp", "java", "rust"] as const;
 
 const Editor = () => {
   const router = useRouter();

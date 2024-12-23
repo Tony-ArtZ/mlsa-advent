@@ -1,18 +1,19 @@
 "use client";
-
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import { cpp } from "@codemirror/lang-cpp";
+import { rust } from "@codemirror/lang-rust";
 import { java } from "@codemirror/lang-java";
 import CodeMirror from "@uiw/react-codemirror";
-import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import { memo } from "react";
+import { nord } from "@uiw/codemirror-theme-nord";
 
 const languages = {
   javascript,
   python,
   cpp,
   java,
+  rust,
 };
 
 type Props = {
@@ -25,7 +26,7 @@ export const CodeEditor = memo(({ language, value, onChange }: Props) => {
   return (
     <CodeMirror
       value={value}
-      theme={vscodeDark}
+      theme={nord}
       extensions={[languages[language]()]}
       onChange={onChange}
       className="h-full w-full"
