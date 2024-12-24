@@ -11,6 +11,7 @@ import UserModal from "@/components/UserModal";
 import type { UserDetails } from "@/lib/verifications";
 import { getQuestion } from "@/actions/question";
 import Loader from "@/components/Loader";
+import { executeCode } from "@/actions/execute";  
 
 const languages = ["javascript", "python", "cpp", "java", "rust"] as const;
 
@@ -29,6 +30,8 @@ const Editor = () => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [hint, setHint] = useState("");
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const [isChecking, setIsChecking] = useState(false);
+  const [executionResults, setExecutionResults] = useState<any>(null);
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -93,6 +96,22 @@ const Editor = () => {
       } finally {
         setIsSubmitting(false);
       }
+    }
+  };
+
+  const handleCheck = async () => {
+    setIsChecking(true);
+    console.log('Starting code check:', { language, codeLength: code.length });
+    
+    try {
+      const res = await executeCode(code, language, question.testCases);
+      console.log('Code check completed:', res);
+      setExecutionResults(res);
+    } catch (error) {
+      console.error('Code check failed:', error);
+      alert("Failed to check code. Please try again.");
+    } finally {
+      setIsChecking(false);
     }
   };
 
@@ -198,13 +217,22 @@ const Editor = () => {
               ))}
             </select>
 
-            <button
-              onClick={() => setShowUserModal(true)}
-              disabled={isSubmitting}
-              className="btn-primary disabled:opacity-50"
-            >
-              {isSubmitting ? "Submitting..." : "Submit Solution"}
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={handleCheck}
+                disabled={isChecking}
+                className="btn-secondary disabled:opacity-50"
+              >
+                {isChecking ? "Checking..." : "Check Solution"}
+              </button>
+              <button
+                onClick={() => setShowUserModal(true)}
+                disabled={isSubmitting}
+                className="btn-primary disabled:opacity-50"
+              >
+                {isSubmitting ? "Submitting..." : "Submit Solution"}
+              </button>
+            </div>
           </div>
           <div className="h-[calc(100%-5rem)] lg:h-[calc(100%-4rem)] rounded-xl overflow-hidden border border-white/10">
             <CodeEditor
@@ -213,6 +241,29 @@ const Editor = () => {
               onChange={handleCodeChange}
             />
           </div>
+          {executionResults && (
+            <div className="mt-4 p-4 bg-christmas-dark/30 rounded-lg">
+              <h3 className="text-christmas-gold mb-2">Execution Results:</h3>
+              {executionResults.success ? (
+                executionResults.results.map((result: any, index: number) => (
+                  <div key={index} className="mb-2">
+                    <div className={`text-${result.passed ? 'green' : 'red'}-500`}>
+                      Test Case {index + 1}: {result.passed ? 'Passed' : 'Failed'}
+                    </div>
+                    {!result.passed && (
+                      <div className="text-sm text-christmas-snow/60">
+                        <div>Expected: {question.testCases[index].expected}</div>
+                        <div>Got: {result.output}</div>
+                        {result.error && <div className="text-red-500">Error: {result.error}</div>}
+                      </div>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div className="text-red-500">{executionResults.error}</div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
