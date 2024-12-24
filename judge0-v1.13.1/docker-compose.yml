@@ -10,8 +10,8 @@ services:
     image: judge0/judge0:1.13.1
     volumes:
       - ./judge0.conf:/judge0.conf:ro
-    ports:
-      - "2358:2358"
+    networks:
+      - internal
     privileged: true
     <<: *default-logging
     restart: always
@@ -43,5 +43,26 @@ services:
     <<: *default-logging
     restart: always
 
+  caddy:
+    image: caddy:2.7
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - internal
+    <<: *default-logging
+    restart: always
+
+networks:
+  internal:
+    driver: bridge
+
 volumes:
   data:
+  caddy_data:
+  caddy_config:
