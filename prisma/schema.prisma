@@ -45,9 +45,14 @@ model Submission {
   day        Int
   userId     String   @db.ObjectId
   user       User     @relation(fields: [userId], references: [id])
-  score      Int      @default(0)
-  status     String   @default("pending")
   createdAt  DateTime @default(now())
   question   Question @relation(fields: [questionId], references: [id])
   questionId String   @db.ObjectId
+  status     String   @default("pending")  // pending, running, completed, error
+  passed     Boolean  @default(false)      // whether all test cases passed
+  testResults Json?                        // Array of test case results
+  executionTime Int?                       // execution time in milliseconds
+  memory       Int?                        // memory usage in bytes
+  compileOutput String?                    // compilation output if any
+  stderr       String?                     // error output if any
 }
