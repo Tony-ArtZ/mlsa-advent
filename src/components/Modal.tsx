@@ -20,14 +20,14 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, hint }) => {
 
         <div className="bg-christmas-green/10 p-4 rounded-lg mb-4">
           <p className="text-christmas-gold font-semibold">
-            First Part of Hint:
+            Hint for the Instagram challenge:
           </p>
           <p className="text-christmas-snow/90">{hint}</p>
         </div>
 
         <div className="bg-christmas-red/10 p-4 rounded-lg mb-6">
           <p className="text-christmas-snow/80">
-            Follow us on Instagram for the second part of the hint!
+            Follow us on Instagram and use the hint to solve the challenge !
           </p>
           <a
             href="https://www.instagram.com/mlsakiit/?hl=en"

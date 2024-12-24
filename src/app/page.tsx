@@ -4,6 +4,8 @@ import SnowfallBackground from "@/components/SnowfallBackground";
 import { getAllQuestion } from "@/actions/question";
 
 // Convert to Server Component
+export const revalidate = 1800;
+
 export default async function Home() {
   // Fetch questions from DB
   const response = await getAllQuestion();
