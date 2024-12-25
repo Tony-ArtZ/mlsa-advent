@@ -45,10 +45,9 @@ const Page = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [phrase, setPhrase] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
+  const [error, setError] = useState(""); // Add this line
   const [startAnimations, setStartAnimations] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
-
-  const UNLOCK_PHRASE = "JOY-FROST-LIGHT-STARS-KRAMPUS";
 
   useEffect(() => {
     const checkMobile = () => {
@@ -86,8 +85,12 @@ const Page = () => {
     if (!imagesLoaded || !phrase) return;
 
     if (await checkValidation(phrase)) {
+      setError("");
       setIsUnlocked(true);
       setTimeout(() => setStartAnimations(true), 100);
+    } else {
+      setError("The winter winds reject your phrase. Try again...");
+      setPhrase("");
     }
   };
 
@@ -100,33 +103,40 @@ const Page = () => {
       <div className="frost-container">
         <Preloader onLoad={() => setImagesLoaded(true)} />
         <div className="frost-wrapper">
-          <form onSubmit={handleSubmit} className="flex gap-4">
-            <input
-              type="text"
-              className="frost-input"
-              placeholder={
-                imagesLoaded
-                  ? "Enter the winter phrase..."
-                  : "Loading assets..."
-              }
-              value={phrase}
-              onChange={handlePhraseInput}
-              disabled={!imagesLoaded}
-              autoFocus
-            />
-            <button
-              type="submit"
-              disabled={!imagesLoaded}
-              className="frost-button"
-            >
-              Submit
-            </button>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div className="flex gap-4">
+              <input
+                type="text"
+                className={`frost-input ${error ? "border-red-500" : ""}`}
+                placeholder={
+                  imagesLoaded
+                    ? "Enter the winter phrase..."
+                    : "Loading assets..."
+                }
+                value={phrase}
+                onChange={handlePhraseInput}
+                disabled={!imagesLoaded}
+                autoFocus
+              />
+              <button
+                type="submit"
+                disabled={!imagesLoaded}
+                className="frost-button"
+              >
+                Submit
+              </button>
+            </div>
+            {error && (
+              <p className="text-red-400 text-sm text-center animate-fade-in">
+                {error}
+              </p>
+            )}
+            <p className="text-center text-white/70 text-sm">
+              {imagesLoaded
+                ? "Speak the ancient winter phrase to reveal the path...\n(Format: 'XXXX-XXXX-XXXX-XXXX-XXXX')"
+                : "Preparing the winter landscape..."}
+            </p>
           </form>
-          <p className="text-center mt-4 text-white/70 text-sm">
-            {imagesLoaded
-              ? "Speak the ancient winter phrase to reveal the path..."
-              : "Preparing the winter landscape..."}
-          </p>
         </div>
         <SnowfallBackground />
       </div>
@@ -138,11 +148,22 @@ const Page = () => {
       <div className="vignette-overlay layer-0" style={getParallaxStyle(5)} />
 
       <Image
+        src="/sword.png"
+        alt="sword"
+        height={1080}
+        width={1920}
+        className={`absolute right-0 top-32 z-40 bottom-0 left-0 m-auto w-[95vw] md:w-[70vw] ${
+          startAnimations ? "sword-animate" : "opacity-0"
+        } layer-2`}
+        style={getParallaxStyle(8)}
+      />
+
+      <Image
         src="/recruitment_text.png"
         alt="mountain"
         width={1920}
         height={1080}
-        className={`absolute bottom-0 left-0 m-auto right-0 top-0 w-[90vw] md:w-[42rem] ${
+        className={`absolute bottom-24 left-0 m-auto right-0 top-0 w-[90vw] md:w-[42rem] ${
           startAnimations ? "fade-in" : "opacity-0"
         } layer-3 text-glow emphasis-layer`}
         style={getParallaxStyle(15)}
@@ -152,8 +173,12 @@ const Page = () => {
         alt="MLSA KIIT Logo"
         width={1920}
         height={1080}
-        className="absolute m-auto w-32 md:w-40 left-0 right-0 top-[10%] z-20 fade-in"
+        className="absolute m-auto w-32 md:w-40 left-0 right-0 top-[5%] z-20 fade-in"
       />
+      <h1 className="absolute text-xs px-8 md:text-sm m-auto bottom-0 left-0 top-96 translate-y-[50%] right-0 text-center text-white/80 z-20">
+        Congrats on finding the path! 🎉 Screenshot and dm us the phrase on
+        Instagram to claim your reward!
+      </h1>
 
       <Image
         src="/mountain.png"
@@ -163,17 +188,6 @@ const Page = () => {
         className="absolute left-0 bottom-0 md:-bottom-96 w-screen layer-2 object-contain md:object-cover"
         style={getParallaxStyle(10)}
         priority
-      />
-
-      <Image
-        src="/sword.png"
-        alt="sword"
-        height={1080}
-        width={1920}
-        className={`absolute right-0 top-0 bottom-0 left-0 m-auto w-[95vw] md:w-[70vw] ${
-          startAnimations ? "sword-animate" : "opacity-0"
-        } layer-1`}
-        style={getParallaxStyle(8)}
       />
 
       <div

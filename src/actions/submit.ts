@@ -35,6 +35,7 @@ export const Submit = async (request: unknown) => {
       hint: "Complete the challenge to unlock the hint!",
     };
   } catch (error) {
+    console.error(error);
     return { success: false, error: "Submission failed", hint: "" };
   }
 };

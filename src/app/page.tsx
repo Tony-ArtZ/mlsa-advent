@@ -50,8 +50,8 @@ export default async function Home() {
             Join Santa's Digital Workshop! 🎄
           </h2>
           <p className="text-christmas-snow/80 mb-6">
-            Follow the MLSA KIIT on Instagram for challenge alerts and special
-            surprises!
+            Follow the MLSA KIIT on Instagram for challenge alerts and secret
+            ciphers!
           </p>
           <Link
             href="https://www.instagram.com/mlsakiit/?hl=en"
@@ -153,19 +153,21 @@ export default async function Home() {
               <div className="flex items-start space-x-3">
                 <span className="text-xl">2️⃣</span>
                 <p className="text-sm text-christmas-snow/80">
-                  Write your solution in the code editor
+                  Successfully submit an answer to unlock the <b>Hint</b>
                 </p>
               </div>
               <div className="flex items-start space-x-3">
                 <span className="text-xl">3️⃣</span>
                 <p className="text-sm text-christmas-snow/80">
-                  Submit your solution to earn points
+                  Use the <b>Hint</b> to solve today's cipher on our Instagram
+                  story, to get a phrase
                 </p>
               </div>
               <div className="flex items-start space-x-3">
                 <span className="text-xl">4️⃣</span>
                 <p className="text-sm text-christmas-snow/80">
-                  Come back daily for new challenges
+                  Solve all 5 ciphers and use the phrases to unlock the{" "}
+                  <b>secret</b>
                 </p>
               </div>
             </div>

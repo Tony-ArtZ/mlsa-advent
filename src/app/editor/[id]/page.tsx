@@ -1,16 +1,16 @@
 "use client";
-
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { CodeEditor } from "@/components/CodeMirror";
 import SnowfallBackground from "@/components/SnowfallBackground";
 import { useParams } from "next/navigation";
-import { Submit } from "@/actions/submit";
 import Modal from "@/components/Modal";
 import UserModal from "@/components/UserModal";
 import type { UserDetails } from "@/lib/verifications";
 import { getQuestion } from "@/actions/question";
 import Loader from "@/components/Loader";
+import { verifyCode } from "@/actions/verifyCode";
+import { Submit } from "@/actions/submit";
 
 const languages = ["javascript", "python", "cpp", "java"] as const;
 
@@ -29,6 +29,13 @@ const Editor = () => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [hint, setHint] = useState("");
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const [canSubmit, setCanSubmit] = useState(true);
+  const [outputDisplay, setOutputDisplay] = useState<{
+    show: boolean;
+    success: boolean;
+    message: string;
+  }>({ show: false, success: false, message: "" });
+  const [cooldownTime, setCooldownTime] = useState(0);
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -66,35 +73,83 @@ const Editor = () => {
     setUserDetails(details);
     localStorage.setItem("userDetails", JSON.stringify(details));
     setShowUserModal(false);
-    handleSubmit(details);
+    createSubmission(details);
+  };
+
+  const startCooldown = () => {
+    setCanSubmit(false);
+    setCooldownTime(10);
+
+    const timer = setInterval(() => {
+      setCooldownTime((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setCanSubmit(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
   };
 
   const handleSubmit = async (details?: UserDetails) => {
-    setShowUserModal(false);
-    if (details) {
-      setIsSubmitting(true);
-      try {
-        const res = await Submit({
-          ...details,
-          code,
-          language,
-          day,
-          questionId: question.id,
-        });
+    if (!canSubmit) {
+      alert("Please wait before submitting again");
+      return;
+    }
 
-        if (res.success) {
-          setHint(
-            question.hint || "Complete the challenge to unlock the hint!"
-          );
-          setShowModal(true);
-        } else {
-          throw new Error("Submission failed");
-        }
-      } catch (error) {
-        alert("Failed to submit. Please try again.");
-      } finally {
-        setIsSubmitting(false);
+    setIsSubmitting(true);
+    try {
+      const result = await verifyCode(code, language, question.testCases[0]);
+
+      if (!result.success || result.error) {
+        setOutputDisplay({
+          show: true,
+          success: false,
+          message:
+            result.error ||
+            `Expected: ${question.testCases[0].expected}\nGot: ${result.output}`,
+        });
+        startCooldown();
+      } else {
+        setOutputDisplay({ show: false, success: false, message: "" });
+        setShowUserModal(true);
       }
+    } catch (error) {
+      setOutputDisplay({
+        show: true,
+        success: false,
+        message: "An error occurred while verifying your code",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const createSubmission = async (details?: UserDetails) => {
+    try {
+      const submission = {
+        name: details?.name,
+        email: details?.email,
+        rollNumber: details?.rollNumber,
+        code,
+        language,
+        day,
+        questionId: question.id,
+      };
+
+      const res = await Submit(submission);
+      if (res.success) {
+        setShowUserModal(false);
+        setHint(question.hint || "Complete the challenge to unlock the hint!");
+        setShowModal(true);
+      } else {
+        throw new Error("Submission failed");
+      }
+    } catch (error) {
+      alert("Failed to submit. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -137,44 +192,61 @@ const Editor = () => {
               </pre>
             </div>
 
+            {/* Warning Section */}
+            <div className="mt-4 p-4 bg-yellow-600/10 rounded-lg border border-yellow-600/20">
+              <h3 className="text-yellow-500 flex items-center gap-2">
+                <span>⚠️</span> Important Note
+              </h3>
+              <div className="mt-2 text-yellow-500/90">
+                <p>Please note:</p>
+                <ul className="list-disc list-inside mt-2">
+                  <li>
+                    Input will be provided as a string exactly as shown in the
+                    test cases
+                  </li>
+                  <li>You must parse the input properly before processing</li>
+                  <li>
+                    Your output format must exactly match the example output
+                    format
+                  </li>
+                  <li>
+                    Any deviation from the expected output format will be
+                    considered incorrect
+                  </li>
+                </ul>
+              </div>
+            </div>
+
             {/* Test Cases Section */}
             <div className="mt-4 p-4 bg-green-800/10 rounded-lg border border-green-800/20">
               <h3 className="text-christmas-gold flex items-center gap-2">
                 <span>🎯</span> Test Cases
               </h3>
               <div className="space-y-4 mt-2">
-                {question.testCases?.map(
-                  (
-                    test: { input: string; expected: string },
-                    index: number
-                  ) => (
-                    <div
-                      key={index}
-                      className="bg-christmas-dark/30 rounded-md p-3"
-                    >
-                      <div className="text-christmas-gold/80 text-sm mb-2">
-                        Test Case {index + 1}:
+                {question.testCases[0] && (
+                  <div className="bg-christmas-dark/30 rounded-md p-3">
+                    <div className="text-christmas-gold/80 text-sm mb-2">
+                      Test Case {1}:
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <div className="text-christmas-snow/60 text-sm mb-1">
+                          Input:
+                        </div>
+                        <pre className="text-christmas-snow/90">
+                          {question.testCases[0].input}
+                        </pre>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <div className="text-christmas-snow/60 text-sm mb-1">
-                            Input:
-                          </div>
-                          <pre className="text-christmas-snow/90">
-                            {test.input}
-                          </pre>
+                      <div>
+                        <div className="text-christmas-snow/60 text-sm mb-1">
+                          Expected Output:
                         </div>
-                        <div>
-                          <div className="text-christmas-snow/60 text-sm mb-1">
-                            Expected Output:
-                          </div>
-                          <pre className="text-christmas-snow/90 whitespace-pre">
-                            {test.expected}
-                          </pre>
-                        </div>
+                        <pre className="text-christmas-snow/90 whitespace-pre">
+                          {question.testCases[0].expected}
+                        </pre>
                       </div>
                     </div>
-                  )
+                  </div>
                 )}
               </div>
             </div>
@@ -201,11 +273,15 @@ const Editor = () => {
             </select>
 
             <button
-              onClick={() => setShowUserModal(true)}
-              disabled={isSubmitting}
-              className="btn-primary disabled:opacity-50"
+              onClick={() => handleSubmit()}
+              disabled={isSubmitting || !canSubmit}
+              className="btn-primary disabled:opacity-50 min-w-[150px]"
             >
-              {isSubmitting ? "Submitting..." : "Submit Solution"}
+              {isSubmitting
+                ? "Submitting..."
+                : !canSubmit
+                ? `Wait ${cooldownTime}s`
+                : "Submit Solution"}
             </button>
           </div>
           <div className="h-[calc(100%-5rem)] lg:h-[calc(100%-4rem)] rounded-xl overflow-hidden border border-white/10">
@@ -218,9 +294,29 @@ const Editor = () => {
         </div>
       </div>
 
+      {outputDisplay.show && (
+        <div
+          className={`fixed bottom-4 right-4 p-4 rounded-lg ${
+            outputDisplay.success ? "bg-green-800" : "bg-christmas-red"
+          } text-christmas-snow z-50`}
+        >
+          <pre className="whitespace-pre-wrap">{outputDisplay.message}</pre>
+          <button
+            onClick={() => setOutputDisplay({ ...outputDisplay, show: false })}
+            className="absolute top-2 right-2 text-christmas-snow/80 hover:text-christmas-snow"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       <Modal
         isOpen={showModal}
-        onClose={() => setShowModal(false)}
+        onClose={() => {
+          setShowModal(false);
+          window.open("https://www.instagram.com/mlsakiit/?hl=en", "_blank");
+          router.push("/");
+        }}
         hint={hint}
       />
 
