@@ -102,7 +102,7 @@ const Editor = () => {
   if (!question) return null;
 
   return (
-    <div className="min-h-screen flex flex-wrap relative">
+    <div className="min-h-screen moon-bg flex flex-wrap relative">
       <SnowfallBackground />
 
       {/* Problem Description Side */}
