@@ -100,7 +100,7 @@ const Editor = () => {
 
     setIsSubmitting(true);
     try {
-      const result = await verifyCode(code, language, question.testCases[0]);
+      const result = await verifyCode(code, language, question.testCases);
 
       if (!result.success || result.error) {
         setOutputDisplay({
@@ -201,8 +201,8 @@ const Editor = () => {
                 <p>Please note:</p>
                 <ul className="list-disc list-inside mt-2">
                   <li>
-                    Input will be provided as a string exactly as shown in the
-                    test cases
+                    Input will be provided as a string through standard input
+                    exactly as shown in the test cases
                   </li>
                   <li>You must parse the input properly before processing</li>
                   <li>

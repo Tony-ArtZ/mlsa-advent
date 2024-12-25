@@ -7,9 +7,8 @@ interface testCase {
 export const verifyCode = async (
   code: string,
   language: string,
-  testCase: testCase
+  testCase: testCase[]
 ) => {
-  console.log(testCase);
   try {
     switch (language) {
       case "javascript":
@@ -26,38 +25,42 @@ export const verifyCode = async (
         break;
     }
 
-    const formData = new URLSearchParams();
-    formData.append("code", code);
-    formData.append("language", language);
-    formData.append("input", testCase.input);
+    // Select 2 random test cases
+    const selectedTests = testCase.sort(() => Math.random() - 0.5).slice(0, 2);
 
-    const output = await fetch("https://codex.rycerz.es", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: process.env.CODEX_API_KEY || "",
-      },
-      body: formData.toString(),
-    });
+    for (let i = 0; i < selectedTests.length; i++) {
+      const formData = new URLSearchParams();
+      formData.append("code", code);
+      formData.append("language", language);
+      formData.append("input", selectedTests[i].input);
 
-    const data = await output.json();
+      const output = await fetch("https://codex.rycerz.es", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: process.env.CODEX_API_KEY || "",
+        },
+        body: formData.toString(),
+      });
 
-    if (data.error) {
-      if (
-        data.error ==
-        "CodeX API Timed Out. Your code took too long to execute, over 30 seconds. Make sure you are sending input as payload if your code expects an input."
-      )
-        data.error = "Code Timed out";
-      return { success: false, error: data.error, output: "" };
+      const data = await output.json();
+
+      if (data.error) {
+        if (
+          data.error ==
+          "CodeX API Timed Out. Your code took too long to execute, over 30 seconds. Make sure you are sending input as payload if your code expects an input."
+        ) {
+          data.error = "Code Timed out";
+        }
+        return { success: false, error: data.error, output: "" };
+      }
+
+      if (selectedTests[i].expected.trim() !== data.output.trim()) {
+        return { success: false, error: null, output: data.output };
+      }
     }
 
-    if (testCase.expected.trim() === data.output.trim()) {
-      return { success: true, error: null, output: data.output };
-    }
-
-    return { success: false, error: null, output: data.output };
-
-    return await output.json();
+    return { success: true, error: null, output: "All test cases passed" };
   } catch (error) {
     return { success: false, error: "Submission failed", hint: "" };
   }
