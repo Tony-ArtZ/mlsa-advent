@@ -64,7 +64,7 @@ const FAQ = () => {
   };
 
   return (
-    <div className="card p-8 max-w-4xl mx-auto my-16">
+    <div className="card p-8 max-w-4xl mx-auto my-16" id="faq">
       <button
         onClick={() => setIsSectionOpen(!isSectionOpen)}
         className="w-full flex items-center justify-center gap-4 group"
