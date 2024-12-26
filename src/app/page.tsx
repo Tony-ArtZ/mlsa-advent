@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import SnowfallBackground from "@/components/SnowfallBackground";
 import { getAllQuestion } from "@/actions/question";
+import FAQ from "@/components/FAQ";
 
 // Convert to Server Component
 export const revalidate = 1800;
@@ -173,6 +174,9 @@ export default async function Home() {
             </div>
           </div>
         </div>
+
+        {/* FAQ Section */}
+        <FAQ />
 
         {/* About MLSA Section */}
         <div className="card p-8 max-w-4xl mx-auto my-16 text-center">
