@@ -72,36 +72,65 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* Calendar Section */}
-        <div className="container mx-auto px-4 py-8 relative z-10">
-          <div className="card p-8 max-w-6xl mx-auto bg-christmas-dark/80">
-            <h2 className="text-3xl font-bold text-center text-christmas-gold mb-8 flex items-center justify-center gap-4">
-              <span className="text-4xl">🎄</span>
-              Advent Calendar
-              <span className="text-4xl">🎄</span>
-            </h2>
+        {/* Instructions Card */}
+        <div className="card p-6 max-w-2xl mx-auto mt-8 text-center">
+          <h3 className="text-xl font-bold text-christmas-snow mb-4">
+            How to Participate
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+            <div className="flex items-start space-x-3">
+              <span className="text-xl">1️⃣</span>
+              <p className="text-sm text-christmas-snow/80">
+                Click on today's unlocked challenge to begin
+              </p>
+            </div>
+            <div className="flex items-start space-x-3">
+              <span className="text-xl">2️⃣</span>
+              <p className="text-sm text-christmas-snow/80">
+                Successfully submit an answer to unlock the <b>Hint</b>
+              </p>
+            </div>
+            <div className="flex items-start space-x-3">
+              <span className="text-xl">3️⃣</span>
+              <p className="text-sm text-christmas-snow/80">
+                Use the <b>Hint</b> to solve today's cipher on our Instagram
+                story, to get a phrase
+              </p>
+            </div>
+            <div className="flex items-start space-x-3">
+              <span className="text-xl">4️⃣</span>
+              <p className="text-sm text-christmas-snow/80">
+                Solve all 5 ciphers and use the phrases to unlock the{" "}
+                <b>secret</b>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
-            {/* Calendar Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-              {questions ? (
-                questions.map(
-                  ({
-                    day,
-                    title,
-                    isLocked,
-                    difficulty,
-                    emoji,
-                    description,
-                  }) => (
-                    <Link
-                      href={isLocked ? "#" : `/editor/${day}`}
-                      key={day}
-                      className={`aspect-square relative group ${
-                        isLocked ? "cursor-not-allowed" : "cursor-pointer"
-                      }`}
-                    >
-                      <div
-                        className={`
+      {/* Calendar Section */}
+      <div className="container mx-auto px-4 py-8 relative z-10">
+        <div className="card p-8 max-w-6xl mx-auto bg-christmas-dark/80">
+          <h2 className="text-3xl font-bold text-center text-christmas-gold mb-8 flex items-center justify-center gap-4">
+            <span className="text-4xl">🎄</span>
+            Advent Calendar
+            <span className="text-4xl">🎄</span>
+          </h2>
+
+          {/* Calendar Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            {questions ? (
+              questions.map(
+                ({ day, title, isLocked, difficulty, emoji, description }) => (
+                  <Link
+                    href={isLocked ? "#" : `/editor/${day}`}
+                    key={day}
+                    className={`aspect-square relative group ${
+                      isLocked ? "cursor-not-allowed" : "cursor-pointer"
+                    }`}
+                  >
+                    <div
+                      className={`
                     calendar-day w-full h-full rounded-lg p-4
                     flex flex-col items-center justify-between
                     transform transition-all duration-300
@@ -113,65 +142,29 @@ export default async function Home() {
                     border-2 border-christmas-gold/30
                     backdrop-blur-sm
                   `}
-                      >
-                        <span className="text-3xl mb-2">{emoji}</span>
-                        <span className="text-2xl font-bold text-christmas-snow mb-1">
-                          Day {day}
+                    >
+                      <span className="text-3xl mb-2">{emoji}</span>
+                      <span className="text-2xl font-bold text-christmas-snow mb-1">
+                        Day {day}
+                      </span>
+                      <h3 className="text-christmas-gold font-medium text-sm mb-1">
+                        {title}
+                      </h3>
+                      <p className="text-xs text-christmas-snow/70 line-clamp-2">
+                        {description}
+                      </p>
+                      {isLocked && (
+                        <span className="text-4xl absolute top-2 right-2">
+                          🔒
                         </span>
-                        <h3 className="text-christmas-gold font-medium text-sm mb-1">
-                          {title}
-                        </h3>
-                        <p className="text-xs text-christmas-snow/70 line-clamp-2">
-                          {description}
-                        </p>
-                        {isLocked && (
-                          <span className="text-4xl absolute top-2 right-2">
-                            🔒
-                          </span>
-                        )}
-                      </div>
-                    </Link>
-                  )
+                      )}
+                    </div>
+                  </Link>
                 )
-              ) : (
-                <div>Loading...</div>
-              )}
-            </div>
-          </div>
-
-          {/* Instructions Card */}
-          <div className="card p-6 max-w-2xl mx-auto mt-8 text-center">
-            <h3 className="text-xl font-bold text-christmas-snow mb-4">
-              How to Participate
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-              <div className="flex items-start space-x-3">
-                <span className="text-xl">1️⃣</span>
-                <p className="text-sm text-christmas-snow/80">
-                  Click on today's unlocked challenge to begin
-                </p>
-              </div>
-              <div className="flex items-start space-x-3">
-                <span className="text-xl">2️⃣</span>
-                <p className="text-sm text-christmas-snow/80">
-                  Successfully submit an answer to unlock the <b>Hint</b>
-                </p>
-              </div>
-              <div className="flex items-start space-x-3">
-                <span className="text-xl">3️⃣</span>
-                <p className="text-sm text-christmas-snow/80">
-                  Use the <b>Hint</b> to solve today's cipher on our Instagram
-                  story, to get a phrase
-                </p>
-              </div>
-              <div className="flex items-start space-x-3">
-                <span className="text-xl">4️⃣</span>
-                <p className="text-sm text-christmas-snow/80">
-                  Solve all 5 ciphers and use the phrases to unlock the{" "}
-                  <b>secret</b>
-                </p>
-              </div>
-            </div>
+              )
+            ) : (
+              <div>Loading...</div>
+            )}
           </div>
         </div>
 
