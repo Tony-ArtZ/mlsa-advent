@@ -12,7 +12,7 @@ import Loader from "@/components/Loader";
 import { verifyCode } from "@/actions/verifyCode";
 import { Submit } from "@/actions/submit";
 
-const languages = ["javascript", "python", "cpp", "java"] as const;
+const languages = ["javascript", "python", "cpp", "java", "c"] as const;
 
 const Editor = () => {
   const router = useRouter();

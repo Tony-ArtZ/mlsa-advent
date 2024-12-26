@@ -14,6 +14,7 @@ const languages = {
   cpp,
   java,
   rust,
+  c: cpp,
 };
 
 type Props = {

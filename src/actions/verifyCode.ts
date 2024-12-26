@@ -23,6 +23,9 @@ export const verifyCode = async (
       case "cpp":
         language = "cpp";
         break;
+      case "c":
+        language = "c";
+        break;
     }
 
     // Select 2 random test cases
