@@ -164,7 +164,7 @@ const Editor = () => {
       <div className="w-full lg:w-1/2 p-4 lg:p-8 relative z-10 order-1">
         <div className="card p-4 lg:p-6 mb-4 lg:mb-6 ">
           <div className="inline-block px-3 py-1 rounded-full bg-christmas-red/20 text-christmas-red text-sm mb-4">
-            Day {day} - December {26 + day}, 2023
+            Day {day} - December {25 + day}, 2023
           </div>
           <h1 className="text-2xl lg:text-3xl font-bold text-christmas-snow mb-4">
             {question.emoji} {question.title}
