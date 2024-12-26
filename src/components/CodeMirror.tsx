@@ -30,7 +30,7 @@ export const CodeEditor = memo(({ language, value, onChange }: Props) => {
       theme={nord}
       extensions={[languages[language]()]}
       onChange={onChange}
-      className="h-full w-full"
+      className="h-full overflow-y-auto w-full"
       basicSetup={{
         lineNumbers: true,
         highlightActiveLineGutter: true,
