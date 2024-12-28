@@ -142,6 +142,7 @@ const Editor = () => {
       if (res.success) {
         setShowUserModal(false);
         setHint(question.hint || "Complete the challenge to unlock the hint!");
+        localStorage.removeItem("gift_claimed");
         setShowModal(true);
       } else {
         throw new Error("Submission failed");

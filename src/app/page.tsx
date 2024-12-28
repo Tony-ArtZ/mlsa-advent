@@ -3,6 +3,7 @@ import Link from "next/link";
 import SnowfallBackground from "@/components/SnowfallBackground";
 import { getAllQuestion } from "@/actions/question";
 import FAQ from "@/components/FAQ";
+import BadgeNotification from "@/components/BadgeNotification";
 
 // Convert to Server Component
 export const revalidate = 1800;
@@ -14,6 +15,7 @@ export default async function Home() {
 
   return (
     <main className="relative min-h-screen bg-gradient-to-b from-christmas-dark via-christmas-pine to-christmas-dark/95">
+      <BadgeNotification />
       <SnowfallBackground />
 
       <div className="container mx-auto px-4 py-12 relative z-10">

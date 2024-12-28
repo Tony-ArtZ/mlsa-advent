@@ -7,6 +7,10 @@ interface ModalProps {
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, hint }) => {
   if (!isOpen) return null;
 
+  const handleClaim = () => {
+    window.location.href = "/badge";
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
@@ -37,6 +41,24 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, hint }) => {
           >
             @mlsakiit
           </a>
+        </div>
+
+        <div className="relative mb-6">
+          <button
+            onClick={handleClaim}
+            className="w-full z-40 card p-4 flex items-center gap-3 hover:scale-105 transition-transform"
+          >
+            <div className="text-4xl animate-shake">🎁</div>
+            <div>
+              <h3 className="text-christmas-gold font-bold mb-1">
+                Claim Your Badge!
+              </h3>
+              <p className="text-christmas-snow/80 text-sm">
+                Congrats on your progress, claim your badge now!
+              </p>
+            </div>
+          </button>
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-christmas-red to-christmas-green opacity-30 blur rounded-lg animate-pulse" />
         </div>
 
         <button onClick={onClose} className="w-full btn-primary">

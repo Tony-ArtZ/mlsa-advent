@@ -29,6 +29,14 @@ export default function UserModal({
     }
   }, [isOpen]);
 
+  const handleClose = () => {
+    const stored = localStorage.getItem("userDetails");
+    if (!stored) {
+      return; // Prevent closing if no stored data
+    }
+    onClose();
+  };
+
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -61,14 +69,14 @@ export default function UserModal({
         {/* Backdrop */}
         <div
           className="fixed inset-0 bg-black/70 transition-opacity"
-          onClick={onClose}
+          onClick={handleClose}
         />
 
         {/* Modal */}
         <div className="relative transform overflow-hidden rounded-lg bg-christmas-dark border border-white/10 p-6 text-left shadow-xl transition-all w-full max-w-md">
           <div className="absolute right-4 top-4">
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="text-christmas-snow/60 hover:text-christmas-snow"
             >
               <svg
