@@ -23,9 +23,9 @@ const BadgeNotification = () => {
 
   return (
     <Link href="/badge">
-      <div className="fixed top-4 right-4 z-50 animate-fadeIn">
+      <div className="fixed bottom-4 sm:top-4 right-4 z-50 animate-fadeIn">
         <div className="relative">
-          <div className="card p-4 flex items-center gap-3 pr-12 animate-bounce-gentle">
+          <div className="card p-4 flex items-center gap-3 pr-12 animate-bounce-gentle max-w-[95vw] sm:max-w-none">
             <div className="text-4xl animate-shake">🎁</div>
             <div>
               <h3 className="text-christmas-gold font-bold mb-1">
